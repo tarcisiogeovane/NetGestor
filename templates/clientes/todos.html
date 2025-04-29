@@ -1,109 +1,480 @@
 {% extends 'base.html' %}
 
 {% block content %}
-    <h1>Todos os Clientes</h1>
-
-    <!-- Informações no topo -->
-    <div style="display: flex; gap: 20px; margin-top: 20px; background-color: #fff; padding: 10px; border-radius: 5px;">
-        <div>
-            <strong>Todos:</strong> 2
-        </div>
-        <div>
-            <strong>Ativos:</strong> 1
-        </div>
-        <div>
-            <strong>Msg. de Pendência:</strong> 0
-        </div>
-        <div>
-            <strong>Msg. de Bloqueio:</strong> 0
-        </div>
-        <div>
-            <strong>Isentos:</strong> 0
-        </div>
-        <div>
-            <strong>Desativados:</strong> 1
+    <!-- Informações no topo com links funcionais -->
+    <div class="section section-info">
+        <div style="display: flex; gap: 20px;">
+            <div>
+                <a href="#" onclick="filterClients('all')" style="text-decoration: none; color: #333;">
+                    <strong>Todos:</strong> <span id="total-clients">2</span>
+                </a>
+            </div>
+            <div>
+                <a href="#" onclick="filterClients('active')" style="text-decoration: none; color: #333;">
+                    <strong>Ativos:</strong> <span id="active-clients">1</span>
+                </a>
+            </div>
+            <div>
+                <a href="#" onclick="filterClients('pending')" style="text-decoration: none; color: #333;">
+                    <strong>Msg. de Pendência:</strong> <span id="pending-clients">0</span>
+                </a>
+            </div>
+            <div>
+                <a href="#" onclick="filterClients('blocked')" style="text-decoration: none; color: #333;">
+                    <strong>Msg. de Bloqueio:</strong> <span id="blocked-clients">0</span>
+                </a>
+            </div>
+            <div>
+                <a href="#" onclick="filterClients('exempt')" style="text-decoration: none; color: #333;">
+                    <strong>Isentos:</strong> <span id="exempt-clients">0</span>
+                </a>
+            </div>
+            <div>
+                <a href="#" onclick="filterClients('inactive')" style="text-decoration: none; color: #333;">
+                    <strong>Desativados:</strong> <span id="inactive-clients">1</span>
+                </a>
+            </div>
         </div>
     </div>
 
     <!-- Barra de pesquisa -->
-    <div style="display: flex; align-items: center; gap: 10px; margin-top: 20px;">
-        <div style="position: relative; flex-grow: 1;">
-            <input type="text" placeholder="Pesquisar clientes..." style="width: 100%; padding: 8px 40px 8px 30px; border-radius: 5px; border: 1px solid #ccc;">
-            <i class="fas fa-search" style="position: absolute; left: 10px; top: 50%; transform: translateY(-50%); color: #888;"></i>
+    <div class="section section-search">
+        <div style="display: flex; align-items: center; gap: 10px;">
+            <div style="position: relative; flex-grow: 1;">
+                <input type="text" id="search-input" placeholder="Pesquisar clientes..." onkeyup="searchClients()" style="width: 100%; padding: 8px 40px 8px 30px; border-radius: 5px; border: 1px solid #ccc;">
+                <i class="fas fa-search" style="position: absolute; left: 10px; top: 50%; transform: translateY(-50%); color: #888;"></i>
+            </div>
+            <button onclick="clearSearch()" style="padding: 8px; border: 1px solid #ccc; border-radius: 5px; background-color: #f0f0f0; cursor: pointer;">
+                <i class="fas fa-times"></i>
+            </button>
+            <button onclick="alert('Abrir filtros')" style="padding: 8px; border: 1px solid #ccc; border-radius: 5px; background-color: #f0f0f0; cursor: pointer;">
+                <i class="fas fa-filter"></i>
+            </button>
         </div>
-        <button style="padding: 8px 15px; border: 1px solid #ccc; border-radius: 5px; background-color: #f0f0f0; cursor: pointer;">Limpar Filtro</button>
-        <button style="padding: 8px 15px; border: 1px solid #ccc; border-radius: 5px; background-color: #f0f0f0; cursor: pointer;">Filtro</button>
     </div>
 
     <!-- Botões Novo e Ações -->
-    <div style="display: flex; gap: 10px; margin-top: 20px;">
-        <button style="padding: 8px 15px; background-color: #0056d2; color: white; border: none; border-radius: 5px; cursor: pointer;">Novo</button>
-        <div style="position: relative;">
-            <button onclick="toggleActionsMenu()" style="padding: 8px 15px; border: 1px solid #ccc; border-radius: 5px; background-color: #f0f0f0; cursor: pointer;">
-                <i class="fas fa-ellipsis-h"></i> Ações
-            </button>
-            <div id="actions-menu" style="display: none; position: absolute; top: 100%; left: 0; background-color: #fff; border: 1px solid #ccc; border-radius: 5px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); z-index: 10;">
-                <a href="#" style="display: block; padding: 8px 15px; text-decoration: none; color: #333;">Ativar Msg. de Pendência</a>
-                <a href="#" style="display: block; padding: 8px 15px; text-decoration: none; color: #333;">Ativar Msg. de Bloqueio</a>
-                <a href="#" style="display: block; padding: 8px 15px; text-decoration: none; color: #333;">Desativar Msg.</a>
-                <a href="#" style="display: block; padding: 8px 15px; text-decoration: none; color: #333;">Ativar</a>
-                <a href="#" style="display: block; padding: 8px 15px; text-decoration: none; color: #333;">Desativar</a>
-                <a href="#" style="display: block; padding: 8px 15px; text-decoration: none; color: #333;">Excluir</a>
-                <a href="#" style="display: block; padding: 8px 15px; text-decoration: none; color: #333;">Exportar XLSX</a>
+    <div class="section section-buttons">
+        <div style="display: flex; gap: 10px;">
+            <button onclick="openNewClientPopup()" style="padding: 8px 15px; background-color: #ff0303; color: white; border: none; border-radius: 5px; cursor: pointer;">Novo</button>
+            <div style="position: relative;">
+                <button onclick="toggleActionsMenu()" style="padding: 8px 15px; border: 1px solid #ccc; border-radius: 5px; background-color: #f0f0f0; cursor: pointer;">
+                    <i class="fas fa-ellipsis-h"></i> Ações
+                </button>
+                <div id="actions-menu" style="display: none; position: absolute; top: 100%; left: 0; background-color: #fff; border: 1px solid #ccc; border-radius: 5px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); z-index: 10;">
+                    <a href="#" style="display: block; padding: 8px 15px; text-decoration: none; color: #333;">Ativar Msg. de Pendência</a>
+                    <a href="#" style="display: block; padding: 8px 15px; text-decoration: none; color: #333;">Ativar Msg. de Bloqueio</a>
+                    <a href="#" style="display: block; padding: 8px 15px; text-decoration: none; color: #333;">Desativar Msg.</a>
+                    <a href="#" style="display: block; padding: 8px 15px; text-decoration: none; color: #333;">Ativar</a>
+                    <a href="#" style="display: block; padding: 8px 15px; text-decoration: none; color: #333;">Desativar</a>
+                    <a href="#" style="display: block; padding: 8px 15px; text-decoration: none; color: #333;">Excluir</a>
+                    <a href="#" style="display: block; padding: 8px 15px; text-decoration: none; color: #333;">Exportar XLSX</a>
+                </div>
             </div>
         </div>
     </div>
 
     <!-- Tabela de Clientes -->
-    <table style="width: 100%; border-collapse: collapse; margin-top: 20px;">
-        <thead>
-            <tr style="background-color: #ddd;">
-                <th style="padding: 10px; border: 1px solid #ccc;">ID</th>
-                <th style="padding: 10px; border: 1px solid #ccc;">Nome</th>
-                <th style="padding: 10px; border: 1px solid #ccc;">Login</th>
-                <th style="padding: 10px; border: 1px solid #ccc;">Dia Venc.</th>
-                <th style="padding: 10px; border: 1px solid #ccc;">IP</th>
-                <th style="padding: 10px; border: 1px solid #ccc;">Servidor</th>
-                <th style="padding: 10px; border: 1px solid #ccc;">Plano</th>
-                <th style="padding: 10px; border: 1px solid #ccc;">Opções</th>
-            </tr>
-        </thead>
-        <tbody>
-            <tr>
-                <td style="padding: 10px; border: 1px solid #ccc;">001</td>
-                <td style="padding: 10px; border: 1px solid #ccc;">João Silva</td>
-                <td style="padding: 10px; border: 1px solid #ccc;">joao.silva</td>
-                <td style="padding: 10px; border: 1px solid #ccc;">10</td>
-                <td style="padding: 10px; border: 1px solid #ccc;">192.168.1.101</td>
-                <td style="padding: 10px; border: 1px solid #ccc;">Servidor A</td>
-                <td style="padding: 10px; border: 1px solid #ccc;">100 Mbps</td>
-                <td style="padding: 10px; border: 1px solid #ccc;">
-                    <a href="#" style="color: #0056d2;">Editar</a> |
-                    <a href="#" style="color: #0056d2;">Detalhes</a>
-                </td>
-            </tr>
-            <tr>
-                <td style="padding: 10px; border: 1px solid #ccc;">002</td>
-                <td style="padding: 10px; border: 1px solid #ccc;">Maria Oliveira</td>
-                <td style="padding: 10px; border: 1px solid #ccc;">maria.oliveira</td>
-                <td style="padding: 10px; border: 1px solid #ccc;">15</td>
-                <td style="padding: 10px; border: 1px solid #ccc;">192.168.1.102</td>
-                <td style="padding: 10px; border: 1px solid #ccc;">Servidor B</td>
-                <td style="padding: 10px; border: 1px solid #ccc;">50 Mbps</td>
-                <td style="padding: 10px; border: 1px solid #ccc;">
-                    <a href="#" style="color: #0056d2;">Editar</a> |
-                    <a href="#" style="color: #0056d2;">Detalhes</a>
-                </td>
-            </tr>
-        </tbody>
-    </table>
+    <div class="section section-table">
+        <table id="clients-table" style="width: 100%; border-collapse: collapse;">
+            <thead>
+                <tr style="background-color: #ddd;">
+                    <th style="padding: 10px; border: 1px solid #ccc;">ID</th>
+                    <th style="padding: 10px; border: 1px solid #ccc;">Nome</th>
+                    <th style="padding: 10px; border: 1px solid #ccc;">Login</th>
+                    <th style="padding: 10px; border: 1px solid #ccc;">Dia Venc.</th>
+                    <th style="padding: 10px; border: 1px solid #ccc;">IP</th>
+                    <th style="padding: 10px; border: 1px solid #ccc;">Servidor</th>
+                    <th style="padding: 10px; border: 1px solid #ccc;">Plano</th>
+                    <th style="padding: 10px; border: 1px solid #ccc;">Opções</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr data-status="active">
+                    <td style="padding: 10px; border: 1px solid #ccc;">001</td>
+                    <td style="padding: 10px; border: 1px solid #ccc;">João Silva</td>
+                    <td style="padding: 10px; border: 1px solid #ccc;">joao.silva</td>
+                    <td style="padding: 10px; border: 1px solid #ccc;">10</td>
+                    <td style="padding: 10px; border: 1px solid #ccc;">192.168.1.101</td>
+                    <td style="padding: 10px; border: 1px solid #ccc;">Servidor A</td>
+                    <td style="padding: 10px; border: 1px solid #ccc;">100 Mbps</td>
+                    <td style="padding: 10px; border: 1px solid #ccc;">
+                        <a href="#" style="color: #ff0303;">Editar</a> |
+                        <a href="#" style="color: #ff0303;">Detalhes</a>
+                    </td>
+                </tr>
+                <tr data-status="inactive">
+                    <td style="padding: 10px; border: 1px solid #ccc;">002</td>
+                    <td style="padding: 10px; border: 1px solid #ccc;">Maria Oliveira</td>
+                    <td style="padding: 10px; border: 1px solid #ccc;">maria.oliveira</td>
+                    <td style="padding: 10px; border: 1px solid #ccc;">15</td>
+                    <td style="padding: 10px; border: 1px solid #ccc;">192.168.1.102</td>
+                    <td style="padding: 10px; border: 1px solid #ccc;">Servidor B</td>
+                    <td style="padding: 10px; border: 1px solid #ccc;">50 Mbps</td>
+                    <td style="padding: 10px; border: 1px solid #ccc;">
+                        <a href="#" style="color: #ff0303;">Editar</a> |
+                        <a href="#" style="color: #ff0303;">Detalhes</a>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Popup de Cadastro -->
+    <div id="new-client-popup" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.5); z-index: 1000;">
+        <div style="background-color: #fff; width: 80%; max-height: 90%; overflow-y: auto; margin: 20px auto; padding: 20px; border-radius: 5px; position: relative;">
+            <h2>Cadastrar Novo Cliente</h2>
+            <form id="new-client-form">
+                <!-- Seção Dados Pessoais -->
+                <div style="margin-bottom: 20px;">
+                    <h3>Dados Pessoais</h3>
+                    <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px;">
+                        <div>
+                            <label>Nome Completo</label>
+                            <input type="text" name="nome_completo" style="width: 100%; padding: 8px; border-radius: 5px; border: 1px solid #ccc;" required>
+                        </div>
+                        <div>
+                            <label>Login</label>
+                            <input type="text" name="login" style="width: 100%; padding: 8px; border-radius: 5px; border: 1px solid #ccc;" required>
+                        </div>
+                        <div>
+                            <label>Senha</label>
+                            <input type="password" id="password" name="senha" style="width: 100%; padding: 8px; border-radius: 5px; border: 1px solid #ccc;" required>
+                        </div>
+                        <div>
+                            <label><input type="checkbox" onclick="togglePassword()"> Mostrar Senha</label>
+                        </div>
+                        <div>
+                            <label>E-mail</label>
+                            <input type="email" name="email" style="width: 100%; padding: 8px; border-radius: 5px; border: 1px solid #ccc;">
+                        </div>
+                        <div>
+                            <label>Tipo de Pessoa</label><br>
+                            <input type="radio" name="tipo_pessoa" value="fisica" checked> Física
+                            <input type="radio" name="tipo_pessoa" value="juridica"> Jurídica
+                        </div>
+                        <div>
+                            <label>RG</label>
+                            <input type="text" name="rg" style="width: 100%; padding: 8px; border-radius: 5px; border: 1px solid #ccc;">
+                        </div>
+                        <div>
+                            <label>CPF</label>
+                            <input type="text" name="cpf" style="width: 100%; padding: 8px; border-radius: 5px; border: 1px solid #ccc;">
+                        </div>
+                        <div>
+                            <label>Telefone</label>
+                            <input type="text" name="telefone" style="width: 100%; padding: 8px; border-radius: 5px; border: 1px solid #ccc;">
+                        </div>
+                        <div>
+                            <label>Celular 1</label>
+                            <input type="text" name="celular1" style="width: 100%; padding: 8px; border-radius: 5px; border: 1px solid #ccc;">
+                        </div>
+                        <div>
+                            <label>Celular 2</label>
+                            <input type="text" name="celular2" style="width: 100%; padding: 8px; border-radius: 5px; border: 1px solid #ccc;">
+                        </div>
+                        <div>
+                            <label>Celular 3</label>
+                            <input type="text" name="celular3" style="width: 100%; padding: 8px; border-radius: 5px; border: 1px solid #ccc;">
+                        </div>
+                        <div>
+                            <label>Celular 4</label>
+                            <input type="text" name="celular4" style="width: 100%; padding: 8px; border-radius: 5px; border: 1px solid #ccc;">
+                        </div>
+                        <div>
+                            <label>Data de Nascimento</label>
+                            <input type="date" name="data_nascimento" style="width: 100%; padding: 8px; border-radius: 5px; border: 1px solid #ccc;">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Seção Endereço -->
+                <div style="margin-bottom: 20px;">
+                    <h3>Endereço</h3>
+                    <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px;">
+                        <div>
+                            <label>CEP</label>
+                            <input type="text" id="cep" name="cep" onblur="buscarCEP()" style="width: 100%; padding: 8px; border-radius: 5px; border: 1px solid #ccc;">
+                        </div>
+                        <div>
+                            <label>Logradouro</label>
+                            <input type="text" id="logradouro" name="logradouro" style="width: 100%; padding: 8px; border-radius: 5px; border: 1px solid #ccc;">
+                        </div>
+                        <div>
+                            <label>Número</label>
+                            <input type="text" name="numero" style="width: 100%; padding: 8px; border-radius: 5px; border: 1px solid #ccc;">
+                        </div>
+                        <div>
+                            <label>Complemento</label>
+                            <input type="text" name="complemento" style="width: 100%; padding: 8px; border-radius: 5px; border: 1px solid #ccc;">
+                        </div>
+                        <div>
+                            <label>Bairro</label>
+                            <input type="text" id="bairro" name="bairro" style="width: 100%; padding: 8px; border-radius: 5px; border: 1px solid #ccc;">
+                        </div>
+                        <div>
+                            <label>Cidade</label>
+                            <input type="text" id="cidade" name="cidade" style="width: 100%; padding: 8px; border-radius: 5px; border: 1px solid #ccc;">
+                        </div>
+                        <div>
+                            <label>UF</label>
+                            <select name="uf" id="uf" style="width: 100%; padding: 8px; border-radius: 5px; border: 1px solid #ccc;">
+                                <option value="">Selecione</option>
+                                <option value="AC">AC</option>
+                                <option value="AL">AL</option>
+                                <option value="AP">AP</option>
+                                <option value="AM">AM</option>
+                                <option value="BA">BA</option>
+                                <option value="CE">CE</option>
+                                <option value="DF">DF</option>
+                                <option value="ES">ES</option>
+                                <option value="GO">GO</option>
+                                <option value="MA">MA</option>
+                                <option value="MT">MT</option>
+                                <option value="MS">MS</option>
+                                <option value="MG">MG</option>
+                                <option value="PA">PA</option>
+                                <option value="PB">PB</option>
+                                <option value="PR">PR</option>
+                                <option value="PE">PE</option>
+                                <option value="PI">PI</option>
+                                <option value="RJ">RJ</option>
+                                <option value="RN">RN</option>
+                                <option value="RS">RS</option>
+                                <option value="RO">RO</option>
+                                <option value="RR">RR</option>
+                                <option value="SC">SC</option>
+                                <option value="SP">SP</option>
+                                <option value="SE">SE</option>
+                                <option value="TO">TO</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Seção Dados Adicionais -->
+                <div style="margin-bottom: 20px;">
+                    <h3>Dados Adicionais</h3>
+                    <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px;">
+                        <div>
+                            <label>Data de Instalação</label>
+                            <input type="date" name="data_instalacao" value="2025-04-29" style="width: 100%; padding: 8px; border-radius: 5px; border: 1px solid #ccc;">
+                        </div>
+                        <div>
+                            <label>Grupo</label>
+                            <select name="grupo" style="width: 100%; padding: 8px; border-radius: 5px; border: 1px solid #ccc;">
+                                <option value="">Selecione um grupo</option>
+                                <option value="grupo1">Grupo 1</option>
+                                <option value="grupo2">Grupo 2</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label>Tipo de Assinante</label>
+                            <select name="tipo_assinante" style="width: 100%; padding: 8px; border-radius: 5px; border: 1px solid #ccc;">
+                                <option value="comercial/industrial">Comercial/Industrial</option>
+                                <option value="poder_publico">Poder Público</option>
+                                <option value="residencial/pessoa_fisica">Residencial/Pessoa Física</option>
+                                <option value="publico">Público</option>
+                                <option value="semi-publico">Semi-Público</option>
+                                <option value="outro">Outro</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label>Tipo de Utilização</label>
+                            <select name="tipo_utilizacao" style="width: 100%; padding: 8px; border-radius: 5px; border: 1px solid #ccc;">
+                                <option value="provimento_acesso_internet">Provimento de Acesso à Internet</option>
+                                <option value="outros">Outros</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label>Modelo de Contrato</label>
+                            <input type="text" name="modelo_contrato" style="width: 100%; padding: 8px; border-radius: 5px; border: 1px solid #ccc;">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Seção Dados do Plano -->
+                <div style="margin-bottom: 20px;">
+                    <h3>Dados do Plano</h3>
+                    <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px;">
+                        <div>
+                            <label>Servidor</label>
+                            <input type="text" name="servidor" style="width: 100%; padding: 8px; border-radius: 5px; border: 1px solid #ccc;">
+                        </div>
+                        <div>
+                            <label>Plano</label>
+                            <select name="plano" style="width: 100%; padding: 8px; border-radius: 5px; border: 1px solid #ccc;">
+                                <option value="100mbps">100 Mbps</option>
+                                <option value="50mbps">50 Mbps</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label>Tipo de Autenticação</label><br>
+                            <input type="radio" name="tipo_autenticacao" value="hotspot"> Hotspot
+                            <input type="radio" name="tipo_autenticacao" value="pppoe"> PPPoE
+                            <input type="radio" name="tipo_autenticacao" value="hotspot_pppoe" checked> Hotspot x PPPoE
+                        </div>
+                        <div>
+                            <label>IP Hotspot</label>
+                            <input type="text" name="ip_hotspot" style="width: 100%; padding: 8px; border-radius: 5px; border: 1px solid #ccc;">
+                        </div>
+                        <div>
+                            <label>IP PPPoE</label>
+                            <input type="text" name="ip_pppoe" style="width: 100%; padding: 8px; border-radius: 5px; border: 1px solid #ccc;">
+                        </div>
+                        <div>
+                            <label>MAC</label>
+                            <input type="text" name="mac" style="width: 100%; padding: 8px; border-radius: 5px; border: 1px solid #ccc;">
+                        </div>
+                        <div>
+                            <label>Dia de Vencimento</label>
+                            <select name="dia_vencimento" style="width: 100%; padding: 8px; border-radius: 5px; border: 1px solid #ccc;">
+                                {% for dia in range(1, 31) %}
+                                    <option value="{{ dia }}">{{ dia }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div>
+                            <label>Dias para Bloqueio</label>
+                            <input type="number" name="dias_bloqueio" style="width: 100%; padding: 8px; border-radius: 5px; border: 1px solid #ccc;">
+                        </div>
+                        <div>
+                            <label>Dias para Msg. Pendência</label>
+                            <input type="number" name="dias_pendencia" style="width: 100%; padding: 8px; border-radius: 5px; border: 1px solid #ccc;">
+                        </div>
+                        <div>
+                            <label>Isento Mensalidade</label><br>
+                            <input type="radio" name="isento_mensalidade" value="sim"> Sim
+                            <input type="radio" name="isento_mensalidade" value="nao" checked> Não
+                        </div>
+                        <div>
+                            <label>Mensalidade Automática</label><br>
+                            <input type="radio" name="mensalidade_automatica" value="sim"> Sim
+                            <input type="radio" name="mensalidade_automatica" value="nao" checked> Não
+                        </div>
+                        <div>
+                            <label>Mensagem de Bloqueio Automática</label><br>
+                            <input type="radio" name="msg_bloqueio_automatica" value="sim"> Sim
+                            <input type="radio" name="msg_bloqueio_automatica" value="nao" checked> Não
+                        </div>
+                        <div>
+                            <label>Mensagem de Pendência Automática</label><br>
+                            <input type="radio" name="msg_pendencia_automatica" value="sim"> Sim
+                            <input type="radio" name="msg_pendencia_automatica" value="nao" checked> Não
+                        </div>
+                        <div>
+                            <label>Permitir Alteração de Senha</label><br>
+                            <input type="radio" name="permitir_alteracao_senha" value="sim"> Sim
+                            <input type="radio" name="permitir_alteracao_senha" value="nao" checked> Não
+                        </div>
+                        <div>
+                            <label>Desconto na Mensalidade (R$)</label>
+                            <input type="number" name="desconto_mensalidade" step="0.01" style="width: 100%; padding: 8px; border-radius: 5px; border: 1px solid #ccc;">
+                        </div>
+                        <div>
+                            <label>Acréscimo na Mensalidade (R$)</label>
+                            <input type="number" name="acrescimo_mensalidade" step="0.01" style="width: 100%; padding: 8px; border-radius: 5px; border: 1px solid #ccc;">
+                        </div>
+                        <div>
+                            <label>Status</label><br>
+                            <input type="radio" name="status" value="ativo" checked> Ativo
+                            <input type="radio" name="status" value="desativado"> Desativado
+                        </div>
+                        <div>
+                            <label>Observação</label>
+                            <textarea name="observacao" style="width: 100%; padding: 8px; border-radius: 5px; border: 1px solid #ccc;"></textarea>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Botões do Formulário -->
+                <div style="display: flex; justify-content: flex-end; gap: 10px;">
+                    <button type="button" onclick="closeNewClientPopup()" style="padding: 8px 15px; border: 1px solid #ccc; border-radius: 5px; background-color: #f0f0f0; cursor: pointer;">Cancelar</button>
+                    <button type="submit" style="padding: 8px 15px; background-color: #ff0303; color: white; border: none; border-radius: 5px; cursor: pointer;">Salvar</button>
+                </div>
+            </form>
+        </div>
+    </div>
 
     <script>
+        // Função para abrir o popup
+        function openNewClientPopup() {
+            document.getElementById('new-client-popup').style.display = 'block';
+        }
+
+        // Função para fechar o popup
+        function closeNewClientPopup() {
+            document.getElementById('new-client-popup').style.display = 'none';
+        }
+
+        // Função para mostrar/esconder a senha
+        function togglePassword() {
+            const passwordField = document.getElementById('password');
+            passwordField.type = passwordField.type === 'password' ? 'text' : 'password';
+        }
+
+        // Função para buscar o CEP
+        function buscarCEP() {
+            const cep = document.getElementById('cep').value.replace(/\D/g, '');
+            if (cep.length === 8) {
+                fetch(`https://viacep.com.br/ws/${cep}/json/`)
+                    .then(response => response.json())
+                    .then(data => {
+                        if (!data.erro) {
+                            document.getElementById('logradouro').value = data.logradouro;
+                            document.getElementById('bairro').value = data.bairro;
+                            document.getElementById('cidade').value = data.localidade;
+                            document.getElementById('uf').value = data.uf;
+                        } else {
+                            alert('CEP não encontrado!');
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Erro ao buscar CEP:', error);
+                        alert('Erro ao buscar CEP!');
+                    });
+            }
+        }
+
+        // Função para filtrar clientes com base no status
+        function filterClients(status) {
+            const rows = document.querySelectorAll('#clients-table tbody tr');
+            rows.forEach(row => {
+                if (status === 'all') {
+                    row.style.display = '';
+                } else {
+                    row.style.display = row.getAttribute('data-status') === status ? '' : 'none';
+                }
+            });
+        }
+
+        // Função para buscar clientes
+        function searchClients() {
+            const input = document.getElementById('search-input').value.toLowerCase();
+            const rows = document.querySelectorAll('#clients-table tbody tr');
+
+            rows.forEach(row => {
+                const name = row.cells[1].textContent.toLowerCase();
+                const login = row.cells[2].textContent.toLowerCase();
+                if (name.includes(input) || login.includes(input)) {
+                    row.style.display = '';
+                } else {
+                    row.style.display = 'none';
+                }
+            });
+        }
+
+        // Função para limpar a busca
+        function clearSearch() {
+            document.getElementById('search-input').value = '';
+            searchClients();
+        }
+
         // Mostrar/esconder o menu de ações
-        document.querySelector('button[onclick="toggleActionsMenu()"]').onclick = function() {
+        function toggleActionsMenu() {
             const menu = document.getElementById('actions-menu');
             menu.style.display = menu.style.display === 'block' ? 'none' : 'block';
-        };
+        }
 
         // Fechar o menu de ações ao clicar fora
         document.addEventListener('click', function(event) {
@@ -112,6 +483,13 @@
             if (!menu.contains(event.target) && !button.contains(event.target)) {
                 menu.style.display = 'none';
             }
+        });
+
+        // Manipular o envio do formulário
+        document.getElementById('new-client-form').addEventListener('submit', function(event) {
+            event.preventDefault();
+            alert('Cliente cadastrado com sucesso! (Funcionalidade de backend a ser implementada)');
+            closeNewClientPopup();
         });
     </script>
 {% endblock %}
