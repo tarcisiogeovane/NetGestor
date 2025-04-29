@@ -1,0 +1,29 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <h1>Clientes Online</h1>
+    <table style="width: 100%; border-collapse: collapse; margin-top: 20px;">
+        <thead>
+            <tr style="background-color: #ddd;">
+                <th style="padding: 10px; border: 1px solid #ccc;">Cliente</th>
+                <th style="padding: 10px; border: 1px solid #ccc;">IP</th>
+                <th style="padding: 10px; border: 1px solid #ccc;">Status</th>
+                <th style="padding: 10px; border: 1px solid #ccc;">Última Conexão</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td style="padding: 10px; border: 1px solid #ccc;">João Silva</td>
+                <td style="padding: 10px; border: 1px solid #ccc;">192.168.1.101</td>
+                <td style="padding: 10px; border: 1px solid #ccc; color: green;">Online</td>
+                <td style="padding: 10px; border: 1px solid #ccc;">29/04/2025 10:00</td>
+            </tr>
+            <tr>
+                <td style="padding: 10px; border: 1px solid #ccc;">Maria Oliveira</td>
+                <td style="padding: 10px; border: 1px solid #ccc;">192.168.1.102</td>
+                <td style="padding: 10px; border: 1px solid #ccc; color: red;">Offline</td>
+                <td style="padding: 10px; border: 1px solid #ccc;">29/04/2025 09:30</td>
+            </tr>
+        </tbody>
+    </table>
+{% endblock %}

@@ -1,0 +1,14 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <h1>Cadastros</h1>
+    <div style="margin-top: 20px;">
+        <h3>Adicionar Novo Cliente</h3>
+        <form style="display: flex; flex-direction: column; gap: 10px; max-width: 300px;">
+            <input type="text" placeholder="Nome" style="padding: 5px;">
+            <input type="text" placeholder="CPF" style="padding: 5px;">
+            <input type="email" placeholder="Email" style="padding: 5px;">
+            <button type="submit" style="padding: 5px; background-color: #0056d2; color: white; border: none;">Cadastrar</button>
+        </form>
+    </div>
+{% endblock %}

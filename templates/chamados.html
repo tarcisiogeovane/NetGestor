@@ -1,0 +1,29 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <h1>Chamados</h1>
+    <table style="width: 100%; border-collapse: collapse; margin-top: 20px;">
+        <thead>
+            <tr style="background-color: #ddd;">
+                <th style="padding: 10px; border: 1px solid #ccc;">ID</th>
+                <th style="padding: 10px; border: 1px solid #ccc;">Cliente</th>
+                <th style="padding: 10px; border: 1px solid #ccc;">Problema</th>
+                <th style="padding: 10px; border: 1px solid #ccc;">Status</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td style="padding: 10px; border: 1px solid #ccc;">#001</td>
+                <td style="padding: 10px; border: 1px solid #ccc;">João Silva</td>
+                <td style="padding: 10px; border: 1px solid #ccc;">Sem internet</td>
+                <td style="padding: 10px; border: 1px solid #ccc;">Aberto</td>
+            </tr>
+            <tr>
+                <td style="padding: 10px; border: 1px solid #ccc;">#002</td>
+                <td style="padding: 10px; border: 1px solid #ccc;">Maria Oliveira</td>
+                <td style="padding: 10px; border: 1px solid #ccc;">Lentidão</td>
+                <td style="padding: 10px; border: 1px solid #ccc;">Resolvido</td>
+            </tr>
+        </tbody>
+    </table>
+{% endblock %}

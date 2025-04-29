@@ -1,0 +1,27 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <h1>Mapa de Clientes</h1>
+    <div id="map" style="height: 500px; margin-top: 20px;"></div>
+
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+
+    <script>
+        // Inicializar o mapa
+        var map = L.map('map').setView([-23.5505, -46.6333], 13); // Centro em São Paulo
+
+        // Adicionar o layer do OpenStreetMap
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            maxZoom: 19,
+        }).addTo(map);
+
+        // Adicionar marcadores fictícios
+        L.marker([-23.5505, -46.6333]).addTo(map)
+            .bindPopup('João Silva<br>Rua A, 123')
+            .openPopup();
+
+        L.marker([-23.5555, -46.6383]).addTo(map)
+            .bindPopup('Maria Oliveira<br>Rua B, 456');
+    </script>
+{% endblock %}

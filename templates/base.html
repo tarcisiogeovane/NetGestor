@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ page_title }} - NetGestor</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Encode+Sans+Semi+Condensed:wght@400;500;600&display=swap" rel="stylesheet">
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        body {
+            font-family: 'Encode Sans Semi Condensed', sans-serif;
+        }
+        .navbar {
+            background-color: #0056d2;
+            height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 20px;
+        }
+        .navbar-brand {
+            font-weight: 600;
+            color: white;
+            font-size: 20px;
+            text-decoration: none;
+        }
+        .logo {
+            display: flex;
+            align-items: center;
+        }
+        .logo img {
+            height: 25px;
+        }
+        .search-container {
+            flex-grow: 1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        .search-bar {
+            width: 500px;
+            height: 24px;
+            border-radius: 20px;
+            border: none;
+            padding: 0 15px;
+            font-size: 12px;
+            line-height: 24px;
+            background-color: #fff;
+        }
+        .navbar-nav {
+            display: flex;
+            align-items: center;
+        }
+        .nav-item {
+            margin-left: 15px;
+        }
+        .nav-link i {
+            color: white;
+            font-size: 16px;
+        }
+        .sidebar {
+            position: fixed;
+            top: 0;
+            bottom: 0;
+            left: 0;
+            width: 200px;
+            background-color: #f8f9fa;
+            padding-top: 50px;
+            transition: transform 0.3s ease;
+        }
+        .sidebar.hidden {
+            transform: translateX(-100%);
+        }
+        .sidebar ul {
+            list-style: none;
+            padding: 0;
+        }
+        .sidebar li {
+            padding: 10px 20px;
+        }
+        .sidebar a {
+            text-decoration: none;
+            color: #333;
+            font-size: 16px;
+            display: flex;
+            align-items: center;
+        }
+        .sidebar i {
+            margin-right: 10px;
+            font-size: 18px;
+        }
+        .sidebar .active, .sidebar .active-submenu {
+            color: #0056d2; /* Apenas a letra fica azul */
+        }
+        .submenu {
+            margin-left: 20px;
+            display: none;
+        }
+        .submenu.active {
+            display: block;
+        }
+        .menu-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            cursor: pointer;
+        }
+        .arrow {
+            font-size: 12px;
+            margin-left: 5px;
+        }
+        .content {
+            margin-left: 200px;
+            padding: 20px;
+            background-color: #e9ecef;
+            min-height: 100vh;
+            transition: margin-left 0.3s ease;
+        }
+        .content.full {
+            margin-left: 0;
+        }
+        .action-btn {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background-color: #0056d2;
+            color: white;
+            text-align: center;
+            line-height: 50px;
+            font-size: 20px;
+        }
+        .menu-toggle {
+            background-color: transparent;
+            border: none;
+            color: white;
+            font-size: 20px;
+            cursor: pointer;
+            margin-right: 10px;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <nav class="navbar">
+            <div class="logo">
+                <a class="navbar-brand" href="#">NetGestor</a>
+            </div>
+            <div class="search-container">
+                <button class="menu-toggle" onclick="toggleSidebar()">
+                    <i class="fas fa-bars"></i>
+                </button>
+                <input class="search-bar" type="search" placeholder="Pesquisar clientes por nome, login, cpf..." aria-label="Search">
+            </div>
+            <div class="navbar-nav">
+                <a class="nav-item nav-link" href="#"><i class="fas fa-comment"></i></a>
+                <a class="nav-item nav-link" href="#"><i class="fas fa-bell"></i></a>
+                <a class="nav-item nav-link" href="#"><i class="fas fa-user"></i></a>
+            </div>
+        </nav>
+    </header>
+    <aside class="sidebar" id="sidebar">
+        <ul>
+            <li>
+                <a href="/" class="{% if page_title == 'Dashboard' %}active{% endif %}">
+                    <i class="fas fa-tachometer-alt"></i> Dashboard
+                </a>
+            </li>
+            <li>
+                <div class="menu-item" onclick="toggleSubmenu('clientes-submenu')">
+                    <a href="/clientes" class="{% if page_title == 'Clientes' or page_title == 'Todos os Clientes' or page_title == 'Contratos' or page_title == 'Mapa de Clientes' or page_title == 'Clientes Online' %}active{% endif %}">
+                        <i class="fas fa-users"></i> Clientes
+                    </a>
+                    <i class="fas fa-angle-right arrow" id="clientes-arrow"></i>
+                </div>
+                <ul class="submenu {% if page_title == 'Todos os Clientes' or page_title == 'Contratos' or page_title == 'Mapa de Clientes' or page_title == 'Clientes Online' %}active{% endif %}" id="clientes-submenu">
+                    <li>
+                        <a href="/clientes/todos" class="{% if page_title == 'Todos os Clientes' %}active-submenu{% endif %}">
+                            Todos
+                        </a>
+                    </li>
+                    <li>
+                        <a href="/clientes/contratos" class="{% if page_title == 'Contratos' %}active-submenu{% endif %}">
+                            Contratos
+                        </a>
+                    </li>
+                    <li>
+                        <a href="/clientes/mapa" class="{% if page_title == 'Mapa de Clientes' %}active-submenu{% endif %}">
+                            Mapa de Clientes
+                        </a>
+                    </li>
+                    <li>
+                        <a href="/clientes/online" class="{% if page_title == 'Clientes Online' %}active-submenu{% endif %}">
+                            Online
+                        </a>
+                    </li>
+                </ul>
+            </li>
+            <li>
+                <a href="/atendimento" class="{% if page_title == 'Atendimento' %}active{% endif %}">
+                    <i class="fas fa-headset"></i> Atendimento
+                </a>
+            </li>
+            <li>
+                <a href="/chamados" class="{% if page_title == 'Chamados' %}active{% endif %}">
+                    <i class="fas fa-ticket-alt"></i> Chamados
+                </a>
+            </li>
+            <li>
+                <a href="/financeiro" class="{% if page_title == 'Financeiro' %}active{% endif %}">
+                    <i class="fas fa-shopping-cart"></i> Financeiro
+                </a>
+            </li>
+            <li>
+                <a href="/rede" class="{% if page_title == 'Rede' %}active{% endif %}">
+                    <i class="fas fa-rocket"></i> Rede
+                </a>
+            </li>
+            <li>
+                <a href="/ferramentas" class="{% if page_title == 'Ferramentas' %}active{% endif %}">
+                    <i class="fas fa-wrench"></i> Ferramentas
+                </a>
+            </li>
+            <li>
+                <a href="/cadastros" class="{% if page_title == 'Cadastros' %}active{% endif %}">
+                    <i class="fas fa-clipboard"></i> Cadastros
+                </a>
+            </li>
+            <li>
+                <a href="/sistema" class="{% if page_title == 'Sistema' %}active{% endif %}">
+                    <i class="fas fa-cog"></i> Sistema
+                </a>
+            </li>
+        </ul>
+    </aside>
+    <main class="content" id="content">
+        {% block content %}{% endblock %}
+    </main>
+    <div class="action-btn">
+        <i class="fas fa-file"></i>
+    </div>
+
+    <script>
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            const content = document.getElementById('content');
+            sidebar.classList.toggle('hidden');
+            content.classList.toggle('full');
+        }
+
+        function toggleSubmenu(submenuId) {
+            const submenu = document.getElementById(submenuId);
+            const arrow = document.getElementById(submenuId.replace('submenu', 'arrow'));
+            const isActive = submenu.classList.contains('active');
+
+            if (isActive) {
+                submenu.classList.remove('active');
+                arrow.classList.remove('fa-angle-down');
+                arrow.classList.add('fa-angle-right');
+            } else {
+                submenu.classList.add('active');
+                arrow.classList.remove('fa-angle-right');
+                arrow.classList.add('fa-angle-down');
+            }
+        }
+    </script>
+</body>
+</html>

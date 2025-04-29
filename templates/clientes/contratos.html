@@ -1,0 +1,32 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <h1>Contratos</h1>
+    <table style="width: 100%; border-collapse: collapse; margin-top: 20px;">
+        <thead>
+            <tr style="background-color: #ddd;">
+                <th style="padding: 10px; border: 1px solid #ccc;">Contrato ID</th>
+                <th style="padding: 10px; border: 1px solid #ccc;">Cliente</th>
+                <th style="padding: 10px; border: 1px solid #ccc;">Plano</th>
+                <th style="padding: 10px; border: 1px solid #ccc;">Data de Início</th>
+                <th style="padding: 10px; border: 1px solid #ccc;">Status</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td style="padding: 10px; border: 1px solid #ccc;">C001</td>
+                <td style="padding: 10px; border: 1px solid #ccc;">João Silva</td>
+                <td style="padding: 10px; border: 1px solid #ccc;">100 Mbps</td>
+                <td style="padding: 10px; border: 1px solid #ccc;">01/01/2025</td>
+                <td style="padding: 10px; border: 1px solid #ccc;">Ativo</td>
+            </tr>
+            <tr>
+                <td style="padding: 10px; border: 1px solid #ccc;">C002</td>
+                <td style="padding: 10px; border: 1px solid #ccc;">Maria Oliveira</td>
+                <td style="padding: 10px; border: 1px solid #ccc;">50 Mbps</td>
+                <td style="padding: 10px; border: 1px solid #ccc;">15/02/2025</td>
+                <td style="padding: 10px; border: 1px solid #ccc;">Ativo</td>
+            </tr>
+        </tbody>
+    </table>
+{% endblock %}
