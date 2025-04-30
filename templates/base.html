@@ -16,7 +16,7 @@
             font-family: 'Encode Sans Semi Condensed', sans-serif;
         }
         .navbar {
-            background-color: #ff0303;
+            background-color: #0056d2;
             height: 50px;
             display: flex;
             align-items: center;
@@ -28,6 +28,11 @@
             color: white;
             font-size: 20px;
             text-decoration: none;
+        }
+        .page-title {
+            color: white;
+            font-size: 16px;
+            margin-left: 10px;
         }
         .logo {
             display: flex;
@@ -95,7 +100,7 @@
             font-size: 18px;
         }
         .sidebar .active, .sidebar .active-submenu {
-            color: #ff0303;
+            color: #0056d2;
         }
         .submenu {
             margin-left: 20px;
@@ -131,7 +136,7 @@
             width: 50px;
             height: 50px;
             border-radius: 50%;
-            background-color: #ff0303;
+            background-color: #0056d2;
             color: white;
             text-align: center;
             line-height: 50px;
@@ -171,6 +176,7 @@
         <nav class="navbar">
             <div class="logo">
                 <a class="navbar-brand" href="#">NetGestor</a>
+                <span class="page-title">{{ page_title }}</span>
             </div>
             <div class="search-container">
                 <button class="menu-toggle" onclick="toggleSidebar()">

@@ -6,32 +6,32 @@
         <div style="display: flex; gap: 20px;">
             <div>
                 <a href="#" onclick="filterClients('all')" style="text-decoration: none; color: #333;">
-                    <strong>Todos:</strong> <span id="total-clients">2</span>
+                    <strong>Todos:</strong> <span id="total-clients">{{ counts.total }}</span>
                 </a>
             </div>
             <div>
                 <a href="#" onclick="filterClients('active')" style="text-decoration: none; color: #333;">
-                    <strong>Ativos:</strong> <span id="active-clients">1</span>
+                    <strong>Ativos:</strong> <span id="active-clients">{{ counts.active }}</span>
                 </a>
             </div>
             <div>
                 <a href="#" onclick="filterClients('pending')" style="text-decoration: none; color: #333;">
-                    <strong>Msg. de Pendência:</strong> <span id="pending-clients">0</span>
+                    <strong>Msg. de Pendência:</strong> <span id="pending-clients">{{ counts.pending }}</span>
                 </a>
             </div>
             <div>
                 <a href="#" onclick="filterClients('blocked')" style="text-decoration: none; color: #333;">
-                    <strong>Msg. de Bloqueio:</strong> <span id="blocked-clients">0</span>
+                    <strong>Msg. de Bloqueio:</strong> <span id="blocked-clients">{{ counts.blocked }}</span>
                 </a>
             </div>
             <div>
                 <a href="#" onclick="filterClients('exempt')" style="text-decoration: none; color: #333;">
-                    <strong>Isentos:</strong> <span id="exempt-clients">0</span>
+                    <strong>Isentos:</strong> <span id="exempt-clients">{{ counts.exempt }}</span>
                 </a>
             </div>
             <div>
                 <a href="#" onclick="filterClients('inactive')" style="text-decoration: none; color: #333;">
-                    <strong>Desativados:</strong> <span id="inactive-clients">1</span>
+                    <strong>Desativados:</strong> <span id="inactive-clients">{{ counts.inactive }}</span>
                 </a>
             </div>
         </div>
@@ -56,19 +56,19 @@
     <!-- Botões Novo e Ações -->
     <div class="section section-buttons">
         <div style="display: flex; gap: 10px;">
-            <button onclick="openNewClientPopup()" style="padding: 8px 15px; background-color: #ff0303; color: white; border: none; border-radius: 5px; cursor: pointer;">Novo</button>
+            <button onclick="openNewClientPopup()" style="padding: 8px 15px; background-color: #0056d2; color: white; border: none; border-radius: 5px; cursor: pointer;">Novo</button>
             <div style="position: relative;">
                 <button onclick="toggleActionsMenu()" style="padding: 8px 15px; border: 1px solid #ccc; border-radius: 5px; background-color: #f0f0f0; cursor: pointer;">
                     <i class="fas fa-ellipsis-h"></i> Ações
                 </button>
                 <div id="actions-menu" style="display: none; position: absolute; top: 100%; left: 0; background-color: #fff; border: 1px solid #ccc; border-radius: 5px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); z-index: 10;">
-                    <a href="#" style="display: block; padding: 8px 15px; text-decoration: none; color: #333;">Ativar Msg. de Pendência</a>
-                    <a href="#" style="display: block; padding: 8px 15px; text-decoration: none; color: #333;">Ativar Msg. de Bloqueio</a>
-                    <a href="#" style="display: block; padding: 8px 15px; text-decoration: none; color: #333;">Desativar Msg.</a>
-                    <a href="#" style="display: block; padding: 8px 15px; text-decoration: none; color: #333;">Ativar</a>
-                    <a href="#" style="display: block; padding: 8px 15px; text-decoration: none; color: #333;">Desativar</a>
-                    <a href="#" style="display: block; padding: 8px 15px; text-decoration: none; color: #333;">Excluir</a>
-                    <a href="#" style="display: block; padding: 8px 15px; text-decoration: none; color: #333;">Exportar XLSX</a>
+                    <a href="#" onclick="applyAction('activate_pending')" style="display: block; padding: 8px 15px; text-decoration: none; color: #333;">Ativar Msg. de Pendência</a>
+                    <a href="#" onclick="applyAction('activate_blocked')" style="display: block; padding: 8px 15px; text-decoration: none; color: #333;">Ativar Msg. de Bloqueio</a>
+                    <a href="#" onclick="applyAction('deactivate_msg')" style="display: block; padding: 8px 15px; text-decoration: none; color: #333;">Desativar Msg.</a>
+                    <a href="#" onclick="applyAction('activate')" style="display: block; padding: 8px 15px; text-decoration: none; color: #333;">Ativar</a>
+                    <a href="#" onclick="applyAction('deactivate')" style="display: block; padding: 8px 15px; text-decoration: none; color: #333;">Desativar</a>
+                    <a href="#" onclick="applyAction('delete')" style="display: block; padding: 8px 15px; text-decoration: none; color: #333;">Excluir</a>
+                    <a href="#" onclick="applyAction('export')" style="display: block; padding: 8px 15px; text-decoration: none; color: #333;">Exportar XLSX</a>
                 </div>
             </div>
         </div>
@@ -76,55 +76,50 @@
 
     <!-- Tabela de Clientes -->
     <div class="section section-table">
-        <table id="clients-table" style="width: 100%; border-collapse: collapse;">
-            <thead>
-                <tr style="background-color: #ddd;">
-                    <th style="padding: 10px; border: 1px solid #ccc;">ID</th>
-                    <th style="padding: 10px; border: 1px solid #ccc;">Nome</th>
-                    <th style="padding: 10px; border: 1px solid #ccc;">Login</th>
-                    <th style="padding: 10px; border: 1px solid #ccc;">Dia Venc.</th>
-                    <th style="padding: 10px; border: 1px solid #ccc;">IP</th>
-                    <th style="padding: 10px; border: 1px solid #ccc;">Servidor</th>
-                    <th style="padding: 10px; border: 1px solid #ccc;">Plano</th>
-                    <th style="padding: 10px; border: 1px solid #ccc;">Opções</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr data-status="active">
-                    <td style="padding: 10px; border: 1px solid #ccc;">001</td>
-                    <td style="padding: 10px; border: 1px solid #ccc;">João Silva</td>
-                    <td style="padding: 10px; border: 1px solid #ccc;">joao.silva</td>
-                    <td style="padding: 10px; border: 1px solid #ccc;">10</td>
-                    <td style="padding: 10px; border: 1px solid #ccc;">192.168.1.101</td>
-                    <td style="padding: 10px; border: 1px solid #ccc;">Servidor A</td>
-                    <td style="padding: 10px; border: 1px solid #ccc;">100 Mbps</td>
-                    <td style="padding: 10px; border: 1px solid #ccc;">
-                        <a href="#" style="color: #ff0303;">Editar</a> |
-                        <a href="#" style="color: #ff0303;">Detalhes</a>
-                    </td>
-                </tr>
-                <tr data-status="inactive">
-                    <td style="padding: 10px; border: 1px solid #ccc;">002</td>
-                    <td style="padding: 10px; border: 1px solid #ccc;">Maria Oliveira</td>
-                    <td style="padding: 10px; border: 1px solid #ccc;">maria.oliveira</td>
-                    <td style="padding: 10px; border: 1px solid #ccc;">15</td>
-                    <td style="padding: 10px; border: 1px solid #ccc;">192.168.1.102</td>
-                    <td style="padding: 10px; border: 1px solid #ccc;">Servidor B</td>
-                    <td style="padding: 10px; border: 1px solid #ccc;">50 Mbps</td>
-                    <td style="padding: 10px; border: 1px solid #ccc;">
-                        <a href="#" style="color: #ff0303;">Editar</a> |
-                        <a href="#" style="color: #ff0303;">Detalhes</a>
-                    </td>
-                </tr>
-            </tbody>
-        </table>
+        <form id="actions-form" method="POST">
+            <table id="clients-table" style="width: 100%; border-collapse: collapse;">
+                <thead>
+                    <tr style="background-color: #ddd;">
+                        <th style="padding: 10px; border: 1px solid #ccc;"><input type="checkbox" onclick="toggleSelectAll(this)"></th>
+                        <th style="padding: 10px; border: 1px solid #ccc;">ID</th>
+                        <th style="padding: 10px; border: 1px solid #ccc;">Nome</th>
+                        <th style="padding: 10px; border: 1px solid #ccc;">Login</th>
+                        <th style="padding: 10px; border: 1px solid #ccc;">Dia Venc.</th>
+                        <th style="padding: 10px; border: 1px solid #ccc;">IP</th>
+                        <th style="padding: 10px; border: 1px solid #ccc;">Servidor</th>
+                        <th style="padding: 10px; border: 1px solid #ccc;">Plano</th>
+                        <th style="padding: 10px; border: 1px solid #ccc;">Opções</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for client in clients %}
+                        <tr data-status="{{ client['status'] }}" data-pending="{{ client['msg_pendencia'] }}" data-blocked="{{ client['msg_bloqueio'] }}">
+                            <td style="padding: 10px; border: 1px solid #ccc;"><input type="checkbox" name="selected_clients" value="{{ client['id'] }}"></td>
+                            <td style="padding: 10px; border: 1px solid #ccc;">{{ client['id'] }}</td>
+                            <td style="padding: 10px; border: 1px solid #ccc;">{{ client['nome'] }}</td>
+                            <td style="padding: 10px; border: 1px solid #ccc;">{{ client['login'] }}</td>
+                            <td style="padding: 10px; border: 1px solid #ccc;">{{ client['dia_venc'] }}</td>
+                            <td style="padding: 10px; border: 1px solid #ccc;">{{ client['ip'] }}</td>
+                            <td style="padding: 10px; border: 1px solid #ccc;">{{ client['servidor'] }}</td>
+                            <td style="padding: 10px; border: 1px solid #ccc;">{{ client['plano'] }}</td>
+                            <td style="padding: 10px; border: 1px solid #ccc;">
+                                <a href="#" style="color: #0056d2;">Editar</a> |
+                                <a href="#" style="color: #0056d2;">Detalhes</a>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            <input type="hidden" id="action-input" name="action">
+        </form>
     </div>
 
     <!-- Popup de Cadastro -->
     <div id="new-client-popup" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.5); z-index: 1000;">
         <div style="background-color: #fff; width: 80%; max-height: 90%; overflow-y: auto; margin: 20px auto; padding: 20px; border-radius: 5px; position: relative;">
             <h2>Cadastrar Novo Cliente</h2>
-            <form id="new-client-form">
+            <form id="new-client-form" method="POST">
+                <input type="hidden" name="action" value="save_new_client">
                 <!-- Seção Dados Pessoais -->
                 <div style="margin-bottom: 20px;">
                     <h3>Dados Pessoais</h3>
@@ -390,13 +385,34 @@
                 <!-- Botões do Formulário -->
                 <div style="display: flex; justify-content: flex-end; gap: 10px;">
                     <button type="button" onclick="closeNewClientPopup()" style="padding: 8px 15px; border: 1px solid #ccc; border-radius: 5px; background-color: #f0f0f0; cursor: pointer;">Cancelar</button>
-                    <button type="submit" style="padding: 8px 15px; background-color: #ff0303; color: white; border: none; border-radius: 5px; cursor: pointer;">Salvar</button>
+                    <button type="submit" style="padding: 8px 15px; background-color: #0056d2; color: white; border: none; border-radius: 5px; cursor: pointer;">Salvar</button>
                 </div>
             </form>
         </div>
     </div>
 
     <script>
+        // Função para selecionar/desmarcar todos os checkboxes
+        function toggleSelectAll(checkbox) {
+            const checkboxes = document.querySelectorAll('input[name="selected_clients"]');
+            checkboxes.forEach(cb => cb.checked = checkbox.checked);
+        }
+
+        // Função para aplicar a ação
+        function applyAction(action) {
+            const selected = document.querySelectorAll('input[name="selected_clients"]:checked');
+            if (selected.length === 0) {
+                alert('Por favor, selecione pelo menos um cliente.');
+                return;
+            }
+            if (action === 'export') {
+                alert('Exportação XLSX a ser implementada.');
+                return;
+            }
+            document.getElementById('action-input').value = action;
+            document.getElementById('actions-form').submit();
+        }
+
         // Função para abrir o popup
         function openNewClientPopup() {
             document.getElementById('new-client-popup').style.display = 'block';
@@ -442,6 +458,12 @@
             rows.forEach(row => {
                 if (status === 'all') {
                     row.style.display = '';
+                } else if (status === 'pending') {
+                    row.style.display = row.getAttribute('data-pending') === '1' ? '' : 'none';
+                } else if (status === 'blocked') {
+                    row.style.display = row.getAttribute('data-blocked') === '1' ? '' : 'none';
+                } else if (status === 'exempt') {
+                    row.style.display = row.getAttribute('data-exempt') === '1' ? '' : 'none';
                 } else {
                     row.style.display = row.getAttribute('data-status') === status ? '' : 'none';
                 }
@@ -454,8 +476,8 @@
             const rows = document.querySelectorAll('#clients-table tbody tr');
 
             rows.forEach(row => {
-                const name = row.cells[1].textContent.toLowerCase();
-                const login = row.cells[2].textContent.toLowerCase();
+                const name = row.cells[2].textContent.toLowerCase();
+                const login = row.cells[3].textContent.toLowerCase();
                 if (name.includes(input) || login.includes(input)) {
                     row.style.display = '';
                 } else {
@@ -483,13 +505,6 @@
             if (!menu.contains(event.target) && !button.contains(event.target)) {
                 menu.style.display = 'none';
             }
-        });
-
-        // Manipular o envio do formulário
-        document.getElementById('new-client-form').addEventListener('submit', function(event) {
-            event.preventDefault();
-            alert('Cliente cadastrado com sucesso! (Funcionalidade de backend a ser implementada)');
-            closeNewClientPopup();
         });
     </script>
 {% endblock %}
