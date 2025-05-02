@@ -1,0 +1,25 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <div class="section section-info">
+        <h2>Configurar RouterBoard</h2>
+        <form method="POST" style="display: flex; flex-direction: column; gap: 10px; max-width: 400px;">
+            <label>IP da RouterBoard:</label>
+            <input type="text" name="rb_host" value="177.37.161.1" required style="padding: 8px; border-radius: 5px; border: 1px solid #ccc;">
+            
+            <label>Usuário:</label>
+            <input type="text" name="rb_user" value="tarciso" required style="padding: 8px; border-radius: 5px; border: 1px solid #ccc;">
+            
+            <label>Senha:</label>
+            <input type="password" name="rb_password" required style="padding: 8px; border-radius: 5px; border: 1px solid #ccc;">
+            
+            <button type="submit" style="padding: 8px 15px; background-color: #0056d2; color: white; border: none; border-radius: 5px; cursor: pointer;">Conectar e Sincronizar</button>
+        </form>
+
+        {% if sync_message %}
+            <p class="{{ 'success-message' if sync_success else 'error-message' }}" style="margin-top: 20px;">
+                {{ sync_message }}
+            </p>
+        {% endif %}
+    </div>
+{% endblock %}
