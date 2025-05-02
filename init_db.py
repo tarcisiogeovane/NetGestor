@@ -4,7 +4,7 @@ import sqlite3
 conn = sqlite3.connect('netgestor.db')
 cursor = conn.cursor()
 
-# Tabela de Clientes
+# Tabela de Clientes (com a nova coluna isento_mensalidade)
 cursor.execute('''
     CREATE TABLE IF NOT EXISTS clients (
         id TEXT PRIMARY KEY,
@@ -17,7 +17,8 @@ cursor.execute('''
         status TEXT,
         msg_pendencia BOOLEAN,
         msg_bloqueio BOOLEAN,
-        data_cadastro TEXT
+        data_cadastro TEXT,
+        isento_mensalidade BOOLEAN DEFAULT 0
     )
 ''')
 
@@ -56,16 +57,16 @@ cursor.execute('''
 # Inserir dados iniciais para teste
 # Clientes
 cursor.executemany('''
-    INSERT OR IGNORE INTO clients (id, nome, login, dia_venc, ip, servidor, plano, status, msg_pendencia, msg_bloqueio, data_cadastro)
-    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+    INSERT OR IGNORE INTO clients (id, nome, login, dia_venc, ip, servidor, plano, status, msg_pendencia, msg_bloqueio, data_cadastro, isento_mensalidade)
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
 ''', [
-    ("001", "João Silva", "joao.silva", "10", "192.168.1.101", "Servidor A", "100 Mbps", "active", False, False, "2025-04-25"),
-    ("002", "Maria Oliveira", "maria.oliveira", "15", "192.168.1.102", "Servidor B", "50 Mbps", "inactive", False, False, "2025-04-26")
+    ("001", "João Silva", "joao.silva", "10", "192.168.1.101", "Servidor A", "100 Mbps", "active", False, False, "2025-04-25", False),
+    ("002", "Maria Oliveira", "maria.oliveira", "15", "192.168.1.102", "Servidor B", "50 Mbps", "inactive", False, False, "2025-04-26", False)
 ])
 
 # Pagamentos
 cursor.executemany('''
-    INSERT INTO pagamentos (client_id, data, valor) VALUES (?, ?, ?)
+    INSERT OR IGNORE INTO pagamentos (client_id, data, valor) VALUES (?, ?, ?)
 ''', [
     ("001", "2025-04-25", 300.00),
     ("001", "2025-04-26", 450.00),
@@ -77,7 +78,7 @@ cursor.executemany('''
 
 # Despesas
 cursor.executemany('''
-    INSERT INTO despesas (valor, status, data) VALUES (?, ?, ?)
+    INSERT OR IGNORE INTO despesas (valor, status, data) VALUES (?, ?, ?)
 ''', [
     (100.00, "paga", "2025-04-01"),
     (150.00, "paga", "2025-04-02"),
@@ -88,7 +89,7 @@ cursor.executemany('''
 
 # Chamados
 cursor.executemany('''
-    INSERT INTO chamados (client_id, status, data) VALUES (?, ?, ?)
+    INSERT OR IGNORE INTO chamados (client_id, status, data) VALUES (?, ?, ?)
 ''', [
     ("001", "novo", "2025-04-01"),
     ("001", "em_aberto", "2025-04-02"),
