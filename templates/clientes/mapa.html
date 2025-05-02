@@ -14,14 +14,19 @@
         // Adicionar o layer do OpenStreetMap
         L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
             maxZoom: 19,
-        }).addTo(map);
-
-        // Adicionar marcadores fictícios
-        L.marker([-23.5505, -46.6333]).addTo(map)
-            .bindPopup('João Silva<br>Rua A, 123')
-            .openPopup();
-
-        L.marker([-23.5555, -46.6383]).addTo(map)
-            .bindPopup('Maria Oliveira<br>Rua B, 456');
+        }).addTo(map);    
     </script>
+
+<div class="section section-info">
+    <h2>Mapa de Clientes</h2>
+    {% if clients %}
+        <ul>
+            {% for client in clients %}
+                <li>{{ client['nome'] }} - IP: {{ client['ip'] }} - Servidor: {{ client['servidor'] }} - Status: {{ client['status'] }}</li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <p>Nenhum cliente cadastrado.</p>
+    {% endif %}
+</div>
 {% endblock %}

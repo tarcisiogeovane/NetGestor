@@ -229,6 +229,21 @@
                 </ul>
             </li>
             <li>
+                <div class="menu-item" onclick="toggleSubmenu('rede-submenu')">
+                    <a href="/rede" class="{% if page_title == 'Rede' or page_title == 'Servidores' %}active{% endif %}">
+                        <i class="fas fa-rocket"></i> Rede
+                    </a>
+                    <i class="fas fa-angle-right arrow" id="rede-arrow"></i>
+                </div>
+                <ul class="submenu {% if page_title == 'Servidores' %}active{% endif %}" id="rede-submenu">
+                    <li>
+                        <a href="/rede/servidores" class="{% if page_title == 'Servidores' %}active-submenu{% endif %}">
+                            <i class="fas fa-server"></i> Servidores
+                        </a>
+                    </li>
+                </ul>
+            </li>
+            <li>
                 <a href="/atendimento" class="{% if page_title == 'Atendimento' %}active{% endif %}">
                     <i class="fas fa-headset"></i> Atendimento
                 </a>
@@ -244,11 +259,6 @@
                 </a>
             </li>
             <li>
-                <a href="/rede" class="{% if page_title == 'Rede' %}active{% endif %}">
-                    <i class="fas fa-rocket"></i> Rede
-                </a>
-            </li>
-            <li>
                 <a href="/ferramentas" class="{% if page_title == 'Ferramentas' %}active{% endif %}">
                     <i class="fas fa-wrench"></i> Ferramentas
                 </a>
@@ -261,11 +271,6 @@
             <li>
                 <a href="/sistema" class="{% if page_title == 'Sistema' %}active{% endif %}">
                     <i class="fas fa-cog"></i> Sistema
-                </a>
-            </li>
-            <li>
-                <a href="/configurar_routerboard" class="{% if page_title == 'Configurar RouterBoard' %}active{% endif %}">
-                    <i class="fas fa-network-wired"></i> Configurar RouterBoard
                 </a>
             </li>
         </ul>

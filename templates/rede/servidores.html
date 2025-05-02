@@ -1,0 +1,109 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <div class="section section-info">
+        <h2>Servidores</h2>
+        <button onclick="openNewServerPopup()" style="padding: 8px 15px; background-color: #0056d2; color: white; border: none; border-radius: 5px; cursor: pointer;">Novo</button>
+
+        <!-- Tabela de Servidores -->
+        {% if servidores %}
+            <table style="width: 100%; border-collapse: collapse; margin-top: 20px;">
+                <thead>
+                    <tr style="background-color: #ddd;">
+                        <th style="padding: 10px; border: 1px solid #ccc;">Nome</th>
+                        <th style="padding: 10px; border: 1px solid #ccc;">Porta</th>
+                        <th style="padding: 10px; border: 1px solid #ccc;">Usar VPN</th>
+                        <th style="padding: 10px; border: 1px solid #ccc;">IP</th>
+                        <th style="padding: 10px; border: 1px solid #ccc;">Usuário</th>
+                        <th style="padding: 10px; border: 1px solid #ccc;">Ações</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for servidor in servidores %}
+                        <tr>
+                            <td style="padding: 10px; border: 1px solid #ccc;">{{ servidor['nome'] }}</td>
+                            <td style="padding: 10px; border: 1px solid #ccc;">{{ servidor['porta'] }}</td>
+                            <td style="padding: 10px; border: 1px solid #ccc;">{{ 'Sim' if servidor['usar_vpn'] else 'Não' }}</td>
+                            <td style="padding: 10px; border: 1px solid #ccc;">{{ servidor['ip'] or '-' }}</td>
+                            <td style="padding: 10px; border: 1px solid #ccc;">{{ servidor['usuario'] or '-' }}</td>
+                            <td style="padding: 10px; border: 1px solid #ccc;">
+                                <a href="#" style="color: #0056d2;">Editar</a> |
+                                <a href="#" style="color: #0056d2;">Remover</a>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        {% else %}
+            <p style="margin-top: 20px;">Nenhum servidor cadastrado.</p>
+        {% endif %}
+    </div>
+
+    <!-- Popup de Novo Servidor -->
+    <div id="new-server-popup" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.5); z-index: 1000;">
+        <div style="background-color: #fff; width: 80%; max-height: 90%; overflow-y: auto; margin: 20px auto; padding: 20px; border-radius: 5px; position: relative;">
+            <h2>Cadastrar Novo Servidor</h2>
+            <form id="new-server-form" method="POST">
+                <input type="hidden" name="action" value="save_server">
+                <div style="margin-bottom: 20px;">
+                    <label>Nome</label>
+                    <input type="text" name="nome" style="width: 100%; padding: 8px; border-radius: 5px; border: 1px solid #ccc;" required>
+                </div>
+                <div style="margin-bottom: 20px;">
+                    <label>Porta</label>
+                    <input type="number" name="porta" value="8728" style="width: 100%; padding: 8px; border-radius: 5px; border: 1px solid #ccc;" required>
+                </div>
+                <div style="margin-bottom: 20px;">
+                    <label>Usar VPN</label><br>
+                    <input type="radio" name="usar_vpn" value="sim" onclick="toggleVPNFields(true)" required> Sim
+                    <input type="radio" name="usar_vpn" value="nao" onclick="toggleVPNFields(false)" checked> Não
+                </div>
+                <div id="vpn-fields" style="display: none; margin-bottom: 20px;">
+                    <div>
+                        <label>IP</label>
+                        <input type="text" name="ip" style="width: 100%; padding: 8px; border-radius: 5px; border: 1px solid #ccc;" required>
+                    </div>
+                    <div style="margin-top: 10px;">
+                        <label>Usuário</label>
+                        <input type="text" name="usuario" style="width: 100%; padding: 8px; border-radius: 5px; border: 1px solid #ccc;" required>
+                    </div>
+                    <div style="margin-top: 10px;">
+                        <label>Senha</label>
+                        <input type="password" id="senha" name="senha" style="width: 100%; padding: 8px; border-radius: 5px; border: 1px solid #ccc;" required>
+                    </div>
+                    <div style="margin-top: 10px;">
+                        <label><input type="checkbox" onclick="togglePassword()"> Mostrar Senha</label>
+                    </div>
+                </div>
+                <div style="display: flex; justify-content: flex-end; gap: 10px;">
+                    <button type="button" onclick="closeNewServerPopup()" style="padding: 8px 15px; border: 1px solid #ccc; border-radius: 5px; background-color: #f0f0f0; cursor: pointer;">Cancelar</button>
+                    <button type="submit" style="padding: 8px 15px; background-color: #0056d2; color: white; border: none; border-radius: 5px; cursor: pointer;">Salvar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        function openNewServerPopup() {
+            document.getElementById('new-server-popup').style.display = 'block';
+        }
+
+        function closeNewServerPopup() {
+            document.getElementById('new-server-popup').style.display = 'none';
+        }
+
+        function togglePassword() {
+            const passwordField = document.getElementById('senha');
+            passwordField.type = passwordField.type === 'password' ? 'text' : 'password';
+        }
+
+        function toggleVPNFields(useVPN) {
+            const vpnFields = document.getElementById('vpn-fields');
+            if (useVPN) {
+                vpnFields.style.display = 'none';
+            } else {
+                vpnFields.style.display = 'block';
+            }
+        }
+    </script>
+{% endblock %}
