@@ -3,6 +3,26 @@
 {% block content %}
     <div class="section section-info">
         <h2>Clientes</h2>
+        {% if sync_success %}
+            <p style="color: green;">Sincronização com a RouterBoard realizada com sucesso!</p>
+        {% else %}
+            <p style="color: red;">Falha na sincronização com a RouterBoard. Verifique as credenciais ou a conexão.</p>
+        {% endif %}
+
+        <h3>Clientes no Banco de Dados Local</h3>
+        <ul>
+        {% for cliente in clientes_local %}
+            <li>{{ cliente['nome'] }} (ID: {{ cliente['id'] }}, IP: {{ cliente['ip'] }}, Status: {{ cliente['status'] }})</li>
+        {% endfor %}
+        </ul>
+
+        <h3>Clientes Ativos na RouterBoard</h3>
+        <ul>
+        {% for cliente in clientes_rb %}
+            <li>{{ cliente.get('host-name', 'Sem nome') }} (IP: {{ cliente.get('address', 'Sem IP') }}, MAC: {{ cliente.get('mac-address', 'Sem MAC') }})</li>
+        {% endfor %}
+        </ul>
+
         <p>Selecione uma das opções abaixo para gerenciar os clientes:</p>
         <ul style="list-style: none; padding: 0;">
             <li style="margin: 10px 0;">

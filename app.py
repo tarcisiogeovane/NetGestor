@@ -1,8 +1,24 @@
 from flask import Flask, render_template, request, jsonify, redirect, url_for
 import sqlite3
 from datetime import datetime, timedelta
+from librouteros import connect
+from librouteros.exceptions import LibRouterosError
 
 app = Flask(__name__)
+
+# Configuração da conexão com a RouterBoard
+RB_HOST = "177.37.161.1"
+RB_USER = "tarciso"
+RB_PASSWORD = "tarciso"
+
+# Função para conectar à RouterBoard
+def connect_to_routerboard():
+    try:
+        api = connect(username=RB_USER, password=RB_PASSWORD, host=RB_HOST)
+        return api
+    except LibRouterosError as e:
+        print(f"Erro ao conectar à RouterBoard: {e}")
+        return None
 
 # Função para conectar ao banco de dados
 def get_db_connection():
@@ -35,6 +51,56 @@ def count_clients():
     
     conn.close()
     return {"total": total, "active": active, "inactive": inactive, "pending": pending, "blocked": blocked, "exempt": exempt}
+
+# Função para sincronizar clientes da RouterBoard com o banco de dados local
+def sync_routerboard_clients():
+    api = connect_to_routerboard()
+    if not api:
+        return False
+
+    conn = get_db_connection()
+    cursor = conn.cursor()
+
+    try:
+        # Buscar clientes ativos da RouterBoard (via DHCP Leases)
+        api_clients = api.path("/ip/dhcp-server/lease")
+        clientes_rb = [dict(client) for client in api_clients]
+
+        # Sincronizar com o banco de dados local
+        for client in clientes_rb:
+            client_id = client.get('mac-address', '').replace(':', '')  # Usar MAC como ID único
+            nome = client.get('host-name', f"Cliente-{client_id[:6]}")
+            login = client.get('host-name', f"cliente-{client_id[:6]}").lower()
+            ip = client.get('address', '')
+            status = 'active' if client.get('status') == 'bound' else 'inactive'
+            data_cadastro = datetime.now().strftime('%Y-%m-%d')
+
+            # Verificar se o cliente já existe no banco
+            cursor.execute("SELECT id FROM clients WHERE id = ?", (client_id,))
+            existing_client = cursor.fetchone()
+
+            if not existing_client:
+                # Inserir novo cliente
+                cursor.execute('''
+                    INSERT INTO clients (id, nome, login, dia_venc, ip, servidor, plano, status, msg_pendencia, msg_bloqueio, data_cadastro, isento_mensalidade)
+                    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                ''', (client_id, nome, login, "10", ip, "RouterBoard", "Desconhecido", status, False, False, data_cadastro, False))
+            else:
+                # Atualizar cliente existente
+                cursor.execute('''
+                    UPDATE clients 
+                    SET nome = ?, login = ?, ip = ?, status = ?
+                    WHERE id = ?
+                ''', (nome, login, ip, status, client_id))
+
+        conn.commit()
+        return True
+    except Exception as e:
+        print(f"Erro ao sincronizar clientes da RouterBoard: {e}")
+        return False
+    finally:
+        conn.close()
+        api.close()
 
 # Rota para a página inicial (Dashboard)
 @app.route('/')
@@ -117,7 +183,35 @@ def dashboard():
 # Rota para Clientes
 @app.route('/clientes')
 def clientes():
-    return render_template('clientes/clientes.html', page_title="Clientes")
+    # Sincronizar clientes da RouterBoard com o banco de dados
+    sync_success = sync_routerboard_clients()
+
+    # Conectar ao banco de dados local
+    conn = get_db_connection()
+    cursor = conn.cursor()
+
+    # Buscar clientes do banco de dados local
+    cursor.execute("SELECT * FROM clients")
+    clientes_local = cursor.fetchall()
+
+    # Buscar clientes diretamente da RouterBoard
+    api = connect_to_routerboard()
+    clientes_rb = []
+    if api:
+        try:
+            api_clients = api.path("/ip/dhcp-server/lease")
+            clientes_rb = [dict(client) for client in api_clients]
+        except Exception as e:
+            print(f"Erro ao buscar clientes da RouterBoard: {e}")
+        finally:
+            api.close()
+
+    conn.close()
+    return render_template('clientes/clientes.html', 
+                          page_title="Clientes", 
+                          clientes_local=clientes_local, 
+                          clientes_rb=clientes_rb, 
+                          sync_success=sync_success)
 
 # Rota para Clientes > Todos
 @app.route('/clientes/todos', methods=['GET', 'POST'])
