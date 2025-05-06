@@ -89,7 +89,7 @@ def init_db():
     conn.commit()
     conn.close()
 
-# Função para conectar à RouterBoard
+# Função para se conectar à RouterBoard
 def connect_to_routerboard(host, user, password, port):
     try:
         api = connect(username=user, password=password, host=host, port=port)
